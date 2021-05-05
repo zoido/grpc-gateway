@@ -291,7 +291,6 @@ func testEchoBody(t *testing.T, port int, apiPrefix string, useTrailers bool) {
 
 	apiURL := fmt.Sprintf("http://localhost:%d/%s/example/echo_body", port, apiPrefix)
 
-	client := &http.Client{}
 	req, err := http.NewRequest("POST", apiURL, bytes.NewReader(payload))
 	if err != nil {
 		t.Errorf("http.NewRequest() failed with %v; want success", err)
@@ -300,7 +299,8 @@ func testEchoBody(t *testing.T, port int, apiPrefix string, useTrailers bool) {
 	if useTrailers {
 		req.Header.Set("TE", "trailers")
 	}
-	resp, err := client.Do(req)
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Errorf("client.Do(%v) failed with %v; want success", req, err)
 		return
@@ -617,7 +617,6 @@ func testABEBulkCreate(t *testing.T, port int, useTrailers bool) {
 	}(w)
 	apiURL := fmt.Sprintf("http://localhost:%d/v1/example/a_bit_of_everything/bulk", port)
 
-	client := &http.Client{}
 	req, err := http.NewRequest("POST", apiURL, r)
 	if err != nil {
 		t.Errorf("http.NewRequest() failed with %v; want success", err)
@@ -629,7 +628,7 @@ func testABEBulkCreate(t *testing.T, port int, useTrailers bool) {
 		req.Header.Set("TE", "trailers")
 	}
 
-	resp, err := client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Errorf("client.Do(%v) failed with %v; want success", req, err)
 		return
@@ -1033,7 +1032,6 @@ func testABELookupNotFound(t *testing.T, port int, useTrailers bool) {
 	uuid := "not_exist"
 	apiURL = fmt.Sprintf("%s/%s", apiURL, uuid)
 
-	client := &http.Client{}
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		t.Errorf("http.NewRequest() failed with %v; want success", err)
@@ -1044,7 +1042,7 @@ func testABELookupNotFound(t *testing.T, port int, useTrailers bool) {
 		req.Header.Set("TE", "trailers")
 	}
 
-	resp, err := client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Errorf("client.Do(%v) failed with %v; want success", req, err)
 		return
